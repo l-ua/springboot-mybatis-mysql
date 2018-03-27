@@ -2,6 +2,7 @@ package com.study.springboot;
 
 import com.study.springboot.domain.City;
 import com.study.springboot.mapper.CityMapper;
+import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -17,7 +18,9 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @SpringBootApplication
-@EnableTransactionManagement // 启注解事务管理，等同于xml配置方式的 <tx:annotation-driven />
+@EnableTransactionManagement
+@MapperScan("com.study.springboot.mapper")
+// 启注解事务管理，等同于xml配置方式的 <tx:annotation-driven />
 public class App {
     @RequestMapping("/")
     String index() {
