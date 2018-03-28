@@ -37,4 +37,20 @@ public class CustomImpl implements Custom {
         }
 
     }
+
+    public static void main(String[] args) {
+        jisuan(1, 30, 7);
+    }
+
+    private static void jisuan(int money, int year, int per) {
+        Double totalMoney = 0d;
+        for (int i = 1; i <= year; i++) {
+            Double takeFree = (totalMoney + money) * per / 100D;
+            totalMoney += money + takeFree;
+
+            System.out.println("第" + i + "年投入" + money + "万，年回报率为" + per / 100D + ",当年总金额为"
+                    + totalMoney + "万，当年收益为" + takeFree + "万元");
+        }
+
+    }
 }
