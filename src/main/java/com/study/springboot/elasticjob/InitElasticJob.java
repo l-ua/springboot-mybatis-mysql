@@ -35,8 +35,8 @@ public class InitElasticJob implements CommandLineRunner {
     public void run(String... strings) throws Exception {
 
         log.info("==========从数据库查询需要执行的任务列表============");
-
-        createTask();
+        // 先注释掉
+        // createTask();
     }
 
     private void createTask() {
