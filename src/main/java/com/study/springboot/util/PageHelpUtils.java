@@ -3,6 +3,7 @@ package com.study.springboot.util;
 import com.github.pagehelper.PageInfo;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * <b>System：</b>ncc<br/>
@@ -35,7 +36,7 @@ public class PageHelpUtils {
             return new PageInfo<>();
         }
 
-        int endIndex = (pageNum + 1) * pageSize;
+        int endIndex = pageNum * pageSize - 1;
         endIndex = endIndex >= list.size() ? list.size() : endIndex;
 
 

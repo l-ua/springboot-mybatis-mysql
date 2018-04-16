@@ -1,5 +1,9 @@
 package com.study.springboot.redis;
 
+import com.github.pagehelper.PageInfo;
+
+import java.util.List;
+
 /**
  * <b>System：</b>springboot-mybatis-mysql<br/>
  * <b>Title：</b>RedisService.java<br/>
@@ -75,4 +79,20 @@ public interface RedisService {
      * @return
      */
     long hdel(String key, Object... field);
+
+    /**
+     * redis 支持分页，并且按字段排序
+     * 
+     * @param key 集合的key
+     * @param subKey 集合子key
+     * @param by 排序的字段
+     * @param isAlpha 是否按字母顺序
+     * @param pageNum 当前页
+     * @param pageSize 一页的数量
+     * @param isDesc 是否降序
+     * @param <T> 返回的数据
+     * @return
+     */
+    <T> List<T> getPageInfoByRedis(String key, String subKey, String by, boolean isAlpha,
+            Integer pageNum, Integer pageSize, boolean isDesc);
 }

@@ -1,10 +1,20 @@
 package com.study.springboot.redis.impl;
 
+import com.github.pagehelper.PageInfo;
 import com.study.springboot.redis.RedisService;
+import org.apache.commons.lang3.time.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.connection.SortParameters;
 import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.data.redis.core.ZSetOperations;
+import org.springframework.data.redis.core.query.SortQuery;
+import org.springframework.data.redis.core.query.SortQueryBuilder;
 import org.springframework.stereotype.Service;
+import redis.clients.jedis.SortingParams;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
@@ -24,7 +34,8 @@ public class RedisServiceImpl implements RedisService {
 
     @Override
     public String getSeq(String seqKey) {
-        return null;
+        long seq = redisTemplate.opsForValue().increment(seqKey, 1L);
+        return "index" + seq;
     }
 
     /**
@@ -97,6 +108,60 @@ public class RedisServiceImpl implements RedisService {
     @Override
     public long hdel(String key, Object... field) {
         return 0;
+    }
+
+    @Override
+    public <T> List<T> getPageInfoByRedis(String key, String subKey, String by, boolean isAlpha,
+            Integer pageNum, Integer pageSize, boolean isDesc) {
+        // 默认第一页
+        pageNum = null == pageNum || 0 == pageNum ? 1 : pageNum;
+        // 默认每页10条记录
+        pageSize = null == pageSize || 0 == pageSize ? 10 : pageSize;
+
+        // 缓存中有序集合的开始获取数据的位置
+        int startIndex = (pageNum - 1) * pageSize;
+        // 缓存中有序集合的结束获取数据的位置
+        int endIndex = pageNum * pageSize - 1;
+
+        // 获取数据,升序
+        Set<ZSetOperations.TypedTuple<String>> set =
+                redisTemplate.opsForZSet().rangeWithScores(key, startIndex, endIndex);
+
+        Set<String> set2 =
+            redisTemplate.opsForZSet().range(key, startIndex, endIndex);
+
+        set.stream().forEach(s -> {
+            s.getScore();
+            s.getValue();
+            System.out.println("xxx");
+        });
+
+        SortQueryBuilder<String> builder = SortQueryBuilder.sort(key);
+        SortingParams sortingParameters = new SortingParams();
+        sortingParameters.alpha();
+        // 按什么字段进行排序
+        if (null != by) {
+            // 不能在集群模式下使用 by 选项
+            // builder.by(subKey + "*->" + by);
+        }
+        // 不能在集群模式下使用 GET 选项
+        // builder.get("#");
+        // 是否按照字母排序,若list含有字符串 这个必须设置为true
+        builder.alphabetical(isAlpha);
+        // 是否降序
+        if (isDesc) {
+            builder.order(SortParameters.Order.DESC);
+        }
+        // 设置起始和结束
+        builder.limit(startIndex, endIndex);
+        List<String> cks = redisTemplate.sort(builder.build());
+        List<T> result = new ArrayList<T>();
+
+        // 这里对空不做处理，让业务去处理
+        if (null == cks || cks.size() == 0) {
+            return null;
+        }
+        return (List<T>) cks;
     }
 
     public static void main(String[] args) throws InterruptedException {

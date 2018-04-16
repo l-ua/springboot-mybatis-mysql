@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import java.util.List;
 import java.util.Random;
 import java.util.concurrent.BrokenBarrierException;
 import java.util.concurrent.CyclicBarrier;
@@ -58,6 +59,20 @@ public class RedisTest {
             }.start();
 
 
+        }
+
+    }
+
+    @Test
+    public void testRedisPageSort() {
+        String key = "kk";
+        String subKey = null;
+        String by = null;
+        List<String> list =
+                redisService.getPageInfoByRedis(key, "pro:", "createTime", true, null, null, true);
+
+        for (String str : list) {
+            log.info(str);
         }
 
     }
