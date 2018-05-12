@@ -27,6 +27,14 @@ public abstract class AbstractCommonServiceImpl<T> implements CommonService<T>, 
     @Autowired
     protected ServiceContext serviceContext;
 
+    /**
+     * 多业务线新增的公共逻辑，具体逻辑各自子类实现
+     *
+     * @param multiBizDO
+     * @param bizDataJson
+     * @param map
+     * @return
+     */
     @Override
     public BizResponse batchAdd(MultiBizDO multiBizDO, String bizDataJson, Map<String, Object> map) {
         List<T> data = json2List(bizDataJson);
